@@ -25,6 +25,7 @@ export default class Sphere {
 
   setGeometry() {
     this.geometry = new THREE.SphereGeometry(1, 512, 512)
+    this.geometry.computeTangents()
   }
 
   setMaterial() {
