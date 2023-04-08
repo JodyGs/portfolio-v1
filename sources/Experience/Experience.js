@@ -73,6 +73,7 @@ export default class Experience
         if(this.config.debug)
         {
             this.debug = new Pane()
+            this.debug.containerElem_.style.width = '340px'
         }
     }
 
