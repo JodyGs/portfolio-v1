@@ -1,8 +1,21 @@
+#define M_PI 3.1415926535897932384626433832795
+
 uniform float uTime;
+
 uniform float uDistortionFrequency;
 uniform float uDistortionStrength;
 uniform float uDisplacementFrequency;
 uniform float uDisplacementStrength;
+
+uniform vec3 uBaseColor;
+
+uniform vec3 uLightAColor;
+uniform vec3 uLightAPosition;
+uniform float uLightAIntensity;
+
+uniform vec3 uLightBColor;
+uniform vec3 uLightBPosition;
+uniform float uLightBIntensity;
 
 varying vec3 vNormal;
 varying vec3 vColor;
@@ -32,18 +45,27 @@ void main() {
   vec4 projectedPosition = projectionMatrix * viewPosition;
   gl_Position = projectedPosition;
 
-  // Colors
-  vec3 uLightAColor = vec3(1.0, 0.2, 0.5);
-  vec3 uLightAPosition = vec3(1.0, 0.9, 0.0);
-  float lightAIntensity = max(0.0, - dot(normal, normalize(- uLightAPosition)));
+  // Bi Tangents
+  float tangentNeighbourDistance = (M_PI * 2.0) / 512.0;
+  float biTangentNeighbourDistance = M_PI / 512.0;
   
-  vec3 uLightBColor = vec3(0.5, 0.2, 1.0);
-  vec3 uLightBPosition = vec3(-1.0, -0.4, 0.0);
-  float lightBIntensity = max(0.0, - dot(normal, normalize(- uLightBPosition)));
+  vec3 biTangent = cross(normal, tangent.xyz);
+  vec3 tangentNeighbour = position + tangent.xyz * tangentNeighbourDistance; 
+  tangentNeighbour = getDisplacedPosition(tangentNeighbour).xyz;
+  
+  vec3 biTangentNeighbour = position + biTangent.xyz * biTangentNeighbourDistance; 
+  biTangentNeighbour = getDisplacedPosition(biTangentNeighbour).xyz;
 
-  vec3 color = vec3(0.0);
+  vec3 computedNormal = cross(tangentNeighbour, biTangentNeighbour);
+  computedNormal = normalize(computedNormal);
+
+  // // Colors
+  float lightAIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightAPosition))) * uLightAIntensity;
+  float lightBintensity = max(0.0, - dot(normal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
+
+  vec3 color = uBaseColor;
   color = mix(color, uLightAColor, lightAIntensity);
-  color = mix(color, uLightBColor, lightBIntensity);
+  color = mix(color, uLightBColor, lightBintensity);
 
   vNormal = normal;
   vColor = color;
