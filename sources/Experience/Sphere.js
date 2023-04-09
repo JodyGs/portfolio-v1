@@ -33,7 +33,7 @@ export default class Sphere {
     this.lights.a.intensity = 4.5
 
     this.lights.a.color = {}
-    this.lights.a.color.value = '#ff3e00'
+    this.lights.a.color.value = '#3158ff'
     this.lights.a.color.instance = new THREE.Color(this.lights.a.color.value)
 
     this.lights.a.spherical = new THREE.Spherical(1, 0.615, 2.049)
@@ -44,7 +44,7 @@ export default class Sphere {
     this.lights.b.intensity = 2
 
     this.lights.b.color = {}
-    this.lights.b.color.value = '#0063ff'
+    this.lights.b.color.value = '#a60a0a'
     this.lights.b.color.instance = new THREE.Color(this.lights.b.color.value)
 
     this.lights.b.spherical = new THREE.Spherical(1, 2.561, - 1.844)
@@ -116,7 +116,7 @@ export default class Sphere {
         uDistortionFrequency: { value: 1.5 },
         uDistortionStrength: { value: 0.65 },
         uDisplacementFrequency: { value: 2 },
-        uDisplacementStrength: { value: 0.15 },
+        uDisplacementStrength: { value: 0.065 },
 
         uLightAColor: { value: this.lights.a.color.instance },
         uLightAPosition: { value: new THREE.Vector3(1.0, 1.0, 0.0) },
