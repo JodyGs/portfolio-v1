@@ -9,7 +9,7 @@ export default class Sphere {
     this.scene = this.experience.scene
     this.debug = this.experience.debug
     this.time = this.experience.time
-    this.timeFrequency = 0.0001
+    this.timeFrequency = 0.0003
 
     if (this.debug) {
       this.debugFolder = this.debug.addFolder({
@@ -30,10 +30,10 @@ export default class Sphere {
     // Light A
     this.lights.a = {}
 
-    this.lights.a.intensity = 1.85
+    this.lights.a.intensity = 4.5
 
     this.lights.a.color = {}
-    this.lights.a.color.value = '#ff0000'
+    this.lights.a.color.value = '#ff3e00'
     this.lights.a.color.instance = new THREE.Color(this.lights.a.color.value)
 
     this.lights.a.spherical = new THREE.Spherical(1, 0.615, 2.049)
@@ -41,10 +41,10 @@ export default class Sphere {
     // Light B
     this.lights.b = {}
 
-    this.lights.b.intensity = 1.4
+    this.lights.b.intensity = 2
 
     this.lights.b.color = {}
-    this.lights.b.color.value = '#3158ff'
+    this.lights.b.color.value = '#0063ff'
     this.lights.b.color.instance = new THREE.Color(this.lights.b.color.value)
 
     this.lights.b.spherical = new THREE.Spherical(1, 2.561, - 1.844)
@@ -113,10 +113,10 @@ export default class Sphere {
       fragmentShader: fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uDistortionFrequency: { value: 2 },
-        uDistortionStrength: { value: 1.5 },
+        uDistortionFrequency: { value: 1.5 },
+        uDistortionStrength: { value: 0.65 },
         uDisplacementFrequency: { value: 2 },
-        uDisplacementStrength: { value: 0.2 },
+        uDisplacementStrength: { value: 0.15 },
 
         uLightAColor: { value: this.lights.a.color.instance },
         uLightAPosition: { value: new THREE.Vector3(1.0, 1.0, 0.0) },
@@ -128,9 +128,9 @@ export default class Sphere {
 
         uSubdivision: { value: new THREE.Vector2(this.geometry.parameters.widthSegments, this.geometry.parameters.heightSegments) },
 
-        uFresnelOffset: { value: 1.0 },
-        uFresnelMultiplier: { value: 1.0 },
-        uFresnelPower: { value: 1.0 },
+        uFresnelOffset: { value: -1.0 },
+        uFresnelMultiplier: { value: 2.10 },
+        uFresnelPower: { value: 1.75 },
 
         uBaseColor: { value: new THREE.Color('#000000') },
       },
