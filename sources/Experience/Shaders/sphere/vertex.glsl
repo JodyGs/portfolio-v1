@@ -8,6 +8,7 @@ uniform float uDisplacementFrequency;
 uniform float uDisplacementStrength;
 
 uniform vec3 uBaseColor;
+uniform vec2 uSubdivision;
 
 uniform vec3 uLightAColor;
 uniform vec3 uLightAPosition;
@@ -16,6 +17,10 @@ uniform float uLightAIntensity;
 uniform vec3 uLightBColor;
 uniform vec3 uLightBPosition;
 uniform float uLightBIntensity;
+
+uniform float uFresnelOffset;
+uniform float uFresnelMultiplier;
+uniform float uFresnelPower;
 
 varying vec3 vNormal;
 varying vec3 vColor;
@@ -46,26 +51,31 @@ void main() {
   gl_Position = projectedPosition;
 
   // Bi Tangents
-  float tangentNeighbourDistance = (M_PI * 2.0) / 512.0;
-  float biTangentNeighbourDistance = M_PI / 512.0;
+  float distanceA = (M_PI * 2.0) / uSubdivision.x;
+  float distanceB = M_PI / uSubdivision.y;
   
   vec3 biTangent = cross(normal, tangent.xyz);
-  vec3 tangentNeighbour = position + tangent.xyz * tangentNeighbourDistance; 
-  tangentNeighbour = getDisplacedPosition(tangentNeighbour).xyz;
+  vec3 positionA = position + tangent.xyz * distanceA; 
+  vec3 displacedPositionA = getDisplacedPosition(positionA).xyz;
   
-  vec3 biTangentNeighbour = position + biTangent.xyz * biTangentNeighbourDistance; 
-  biTangentNeighbour = getDisplacedPosition(biTangentNeighbour).xyz;
+  vec3 positionB = position + biTangent.xyz * distanceB; 
+  vec3 displacedPositionB = getDisplacedPosition(positionB).xyz;
 
-  vec3 computedNormal = cross(tangentNeighbour, biTangentNeighbour);
+  vec3 computedNormal = cross(displacedPositionA - displacedPosition.xyz, displacedPositionB - displacedPosition.xyz);
   computedNormal = normalize(computedNormal);
 
+  //Fresnel
+  vec3 viewDirection = normalize(displacedPosition.xyz - cameraPosition);
+  float fresnel = uFresnelOffset + dot(computedNormal, viewDirection ) * uFresnelMultiplier;
+  fresnel = pow(fresnel, uFresnelPower);
+
   // // Colors
-  float lightAIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightAPosition))) * uLightAIntensity;
-  float lightBintensity = max(0.0, - dot(normal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
+  float lightAIntensity = max(0.0, - dot(computedNormal.xyz, normalize(- uLightAPosition))) * uLightAIntensity;
+  float lightBIntensity = max(0.0, - dot(computedNormal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
 
   vec3 color = uBaseColor;
-  color = mix(color, uLightAColor, lightAIntensity);
-  color = mix(color, uLightBColor, lightBintensity);
+  color = mix(color, uLightAColor, lightAIntensity * fresnel);
+  color = mix(color, uLightBColor, lightBIntensity * fresnel);
 
   vNormal = normal;
   vColor = color;

@@ -19,8 +19,8 @@ export default class Sphere {
     }
 
     this.setLights()
-    this.setMaterial()
     this.setGeometry()
+    this.setMaterial()
     this.setMesh()
   }
 
@@ -122,9 +122,15 @@ export default class Sphere {
         uLightAPosition: { value: new THREE.Vector3(1.0, 1.0, 0.0) },
         uLightAIntensity: { value: this.lights.a.intensity },
 
-        uLightBColor: { value: this.lights.b.color.instance},
+        uLightBColor: { value: this.lights.b.color.instance },
         uLightBPosition: { value: new THREE.Vector3(-1.0, -1.0, 0.0) },
         uLightBIntensity: { value: this.lights.b.intensity },
+
+        uSubdivision: { value: new THREE.Vector2(this.geometry.parameters.widthSegments, this.geometry.parameters.heightSegments) },
+
+        uFresnelOffset: { value: 1.0 },
+        uFresnelMultiplier: { value: 1.0 },
+        uFresnelPower: { value: 1.0 },
 
         uBaseColor: { value: new THREE.Color('#000000') },
       },
@@ -184,6 +190,23 @@ export default class Sphere {
         max: 1,
         step: 0.001,
       })
+      this.debugFolder.addInput(
+        this.material.uniforms.uFresnelOffset,
+        'value',
+        { label: 'uFresnelOffset', min: - 2, max: 2, step: 0.001 }
+      )
+
+      this.debugFolder.addInput(
+        this.material.uniforms.uFresnelMultiplier,
+        'value',
+        { label: 'uFresnelMultiplier', min: 0, max: 5, step: 0.001 }
+      )
+
+      this.debugFolder.addInput(
+        this.material.uniforms.uFresnelPower,
+        'value',
+        { label: 'uFresnelPower', min: 0, max: 5, step: 0.001 }
+      )
     }
   }
 
