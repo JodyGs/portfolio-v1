@@ -9,8 +9,6 @@ uniform float uLightBIntensity;
 
 uniform vec2 uSubdivision;
 
-uniform vec3 uOffset;
-
 uniform float uDistortionFrequency;
 uniform float uDistortionStrength;
 uniform float uDisplacementFrequency;
@@ -30,9 +28,9 @@ varying vec3 vColor;
 vec3 getDisplacedPosition(vec3 _position)
 {
     vec3 distoredPosition = _position;
-    distoredPosition += perlin4d(vec4(distoredPosition * uDistortionFrequency + uOffset, uTime)) * uDistortionStrength;
+    distoredPosition += perlin4d(vec4(distoredPosition * uDistortionFrequency, uTime)) * uDistortionStrength;
 
-    float perlinStrength = perlin4d(vec4(distoredPosition * uDisplacementFrequency + uOffset, uTime));
+    float perlinStrength = perlin4d(vec4(distoredPosition * uDisplacementFrequency, uTime));
     
     vec3 displacedPosition = _position;
     displacedPosition += normalize(_position) * perlinStrength * uDisplacementStrength;
