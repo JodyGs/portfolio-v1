@@ -9,6 +9,8 @@ uniform float uLightBIntensity;
 
 uniform vec2 uSubdivision;
 
+uniform vec3 uOffset;
+
 uniform float uDistortionFrequency;
 uniform float uDistortionStrength;
 uniform float uDisplacementFrequency;
@@ -25,25 +27,25 @@ varying vec3 vColor;
 #pragma glslify: perlin4d = require('../partials/perlin4d.glsl')
 #pragma glslify: perlin3d = require('../partials/perlin3d.glsl')
 
-vec3 getDisplacedPosition(vec3 _position)
-{
+vec3 getDisplacedPosition(vec3 _position) {
     vec3 distoredPosition = _position;
-    distoredPosition += perlin4d(vec4(distoredPosition * uDistortionFrequency, uTime)) * uDistortionStrength;
+    distoredPosition += perlin4d(vec4(distoredPosition * uDistortionFrequency + uOffset, uTime)) * uDistortionStrength;
 
-    float perlinStrength = perlin4d(vec4(distoredPosition * uDisplacementFrequency, uTime));
-    
+    float perlinStrength = perlin4d(vec4(distoredPosition * uDisplacementFrequency + uOffset, uTime));
+
     vec3 displacedPosition = _position;
     displacedPosition += normalize(_position) * perlinStrength * uDisplacementStrength;
 
     return displacedPosition;
 }
 
-void main()
-{
+void main() {
     // Position
     vec3 displacedPosition = getDisplacedPosition(position);
-    vec4 viewPosition = viewMatrix * vec4(displacedPosition, 1.0);
-    gl_Position = projectionMatrix * viewPosition;
+    vec4 modelPosition = modelMatrix * vec4(displacedPosition, 1.0);
+    vec4 viewPosition = viewMatrix * modelPosition;
+    vec4 projectedPosition = projectionMatrix * viewPosition;
+    gl_Position = projectedPosition;
 
     // Bi tangents
     float distanceA = (M_PI * 2.0) / uSubdivision.x;
@@ -66,8 +68,8 @@ void main()
     fresnel = pow(max(0.0, fresnel), uFresnelPower);
 
     // Color
-    float lightAIntensity = max(0.0, - dot(computedNormal.xyz, normalize(- uLightAPosition))) * uLightAIntensity;
-    float lightBIntensity = max(0.0, - dot(computedNormal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
+    float lightAIntensity = max(0.0, -dot(computedNormal.xyz, normalize(-uLightAPosition))) * uLightAIntensity;
+    float lightBIntensity = max(0.0, -dot(computedNormal.xyz, normalize(-uLightBPosition))) * uLightBIntensity;
 
     vec3 color = vec3(0.0);
     color = mix(color, uLightAColor, lightAIntensity * fresnel);

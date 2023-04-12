@@ -19,6 +19,7 @@ export default class Sphere {
     }
 
     this.setLights()
+    this.setOffset()
     this.setGeometry()
     this.setMaterial()
     this.setMesh()
@@ -102,6 +103,13 @@ export default class Sphere {
     }
   }
 
+  setOffset() {
+    this.offset = {}
+    this.offset.spherical = new THREE.Spherical(1, Math.random() * Math.PI, Math.random() * Math.PI * 2)
+    this.offset.direction = new THREE.Vector3()
+    this.offset.direction.setFromSpherical(this.offset.spherical)
+  }
+
   setGeometry() {
     this.geometry = new THREE.SphereGeometry(1, 512, 512)
     this.geometry.computeTangents()
@@ -113,10 +121,6 @@ export default class Sphere {
       fragmentShader: fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uDistortionFrequency: { value: 1.5 },
-        uDistortionStrength: { value: 0.65 },
-        uDisplacementFrequency: { value: 2 },
-        uDisplacementStrength: { value: 0.065 },
 
         uLightAColor: { value: this.lights.a.color.instance },
         uLightAPosition: { value: new THREE.Vector3(1.0, 1.0, 0.0) },
@@ -125,9 +129,17 @@ export default class Sphere {
         uLightBColor: { value: this.lights.b.color.instance },
         uLightBPosition: { value: new THREE.Vector3(-1.0, -1.0, 0.0) },
         uLightBIntensity: { value: this.lights.b.intensity },
-
+        
         uSubdivision: { value: new THREE.Vector2(this.geometry.parameters.widthSegments, this.geometry.parameters.heightSegments) },
 
+        uOffset: { value: new THREE.Vector3() },
+        uOffsetSpeed: { value: 2.0 },
+
+        uDistortionFrequency: { value: 1.5 },
+        uDistortionStrength: { value: 0.65 },
+        uDisplacementFrequency: { value: 2 },
+        uDisplacementStrength: { value: 0.065 },
+        
         uFresnelOffset: { value: -1.0 },
         uFresnelMultiplier: { value: 2.10 },
         uFresnelPower: { value: 1.75 },
@@ -216,6 +228,13 @@ export default class Sphere {
   }
 
   update() {
+    const offSetTime = this.time.elapsed 
+    this.offset.spherical.phi = ((Math.sin(offSetTime * 0.002107) * Math.sin(offSetTime * 0.001)) * 0.5 + 0.5) * Math.PI
+    this.offset.spherical.theta = ((Math.sin(offSetTime * 0.001305) * Math.sin(offSetTime * 0.0001)) * 0.5 + 0.5) * Math.PI * 2
+    this.offset.direction.setFromSpherical(this.offset.spherical)
+    this.offset.direction.multiplyScalar(0.003)
+
+    this.material.uniforms.uOffset.value.add(this.offset.direction)
     this.material.uniforms.uTime.value += this.time.delta * this.timeFrequency
   }
 }
