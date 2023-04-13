@@ -42,7 +42,7 @@ export default class Experience
         this.setCamera()
         this.setRenderer()
         this.setResources()
-        this.setAudioReact()
+        // this.setAudioReact()
         this.setWorld()
         
         this.sizes.on('resize', () =>
