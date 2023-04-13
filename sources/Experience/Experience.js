@@ -8,6 +8,7 @@ import Stats from './Utils/Stats.js'
 import Resources from './Resources.js'
 import Renderer from './Renderer.js'
 import Camera from './Camera.js'
+import AudioReact from './AudioReact.js'
 import World from './World.js'
 
 import assets from './assets.js'
@@ -32,7 +33,6 @@ export default class Experience
             console.warn('Missing \'targetElement\' property')
             return
         }
-
         this.time = new Time()
         this.sizes = new Sizes()
         this.setConfig()
@@ -42,6 +42,7 @@ export default class Experience
         this.setCamera()
         this.setRenderer()
         this.setResources()
+        this.setAudioReact()
         this.setWorld()
         
         this.sizes.on('resize', () =>
@@ -105,6 +106,10 @@ export default class Experience
     setResources()
     {
         this.resources = new Resources(assets)
+    }
+
+    setAudioReact() {
+        this.audioReact = new AudioReact();
     }
 
     setWorld()

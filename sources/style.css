@@ -1,3 +1,12 @@
+@font-face {
+	font-family: "Ailerons";
+	src: url("./fonts/subset-Ailerons-Regular.woff2") format("woff2"),
+		url("./fonts/subset-Ailerons-Regular.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+
 *
 {
     margin: 0;
@@ -16,4 +25,20 @@ body
     position: fixed;
     width: 100vw;
     height: 100vh;
+}
+
+.coming-soon {
+    font-family: "Ailerons", Helvetica, Arial, sans-serif;
+	font-weight: 400;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    animation: coming-soon 1s ease-in-out infinite;
 }
